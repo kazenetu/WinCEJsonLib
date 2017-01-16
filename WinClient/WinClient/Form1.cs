@@ -17,6 +17,7 @@ namespace WinClient
         public Form1()
         {
             InitializeComponent();
+            this.ServerPath.Text = baseAddress;
         }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace WinClient
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            var url = string.Format("{0}/SendData", baseAddress);
+            var url = string.Format("{0}/SendData", this.ServerPath.Text);
             this.textBox1.Text = HttpConnectLib.Get(url);
         }
 
@@ -37,7 +38,7 @@ namespace WinClient
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            var url = string.Format("{0}/GetDataCount", baseAddress);
+            var url = string.Format("{0}/GetDataCount", this.ServerPath.Text);
             this.label1.Text = HttpConnectLib.Post(url, this.textBox1.Text);
         }
     }
