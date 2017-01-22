@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -15,12 +18,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.kazenetu.jerseyServer.db.SqliteTest;
 import com.github.kazenetu.jerseyServer.entity.TestData;
 import com.github.kazenetu.jerseyServer.entity.TestDataCount;
 
 //以下でアクセス http://localhost:8080/jerseyServer/app/Service1
 @Path("Service1")
 public class Service1Resource {
+	private ServletContext context;
+
     @GET
     @Path("SendData")
     @Produces(MediaType.APPLICATION_JSON)
@@ -77,5 +83,27 @@ public class Service1Resource {
 		}
 
         return json;
+    }
+
+    @Context
+    public void setServletContext(ServletContext context) {
+        this.context = context;
+    }
+
+    @GET
+    @Path("Login")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String Login(@QueryParam("id") String id){
+
+		String filePath=this.context.getRealPath("/WEB-INF/classes/Test.db");
+
+
+		SqliteTest test = new SqliteTest(filePath);
+
+    	if(test.Login(id)){
+    		return "OK";
+    	}
+
+    	return "NG";
     }
 }
