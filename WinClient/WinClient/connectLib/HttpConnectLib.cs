@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace WinClient.connectLib
 {
@@ -14,7 +15,7 @@ namespace WinClient.connectLib
         /// </summary>
         /// <param name="url">クエリ付きURL</param>
         /// <returns>レスポンス</returns>
-        public static string Get(string url)
+        public static T Get<T>(string url)
         {
             string result = string.Empty;
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -35,7 +36,7 @@ namespace WinClient.connectLib
                 resStream.Close();
             }
 
-            return result;
+            return JsonConvert.DeserializeObject<T>(result);
         }
 
         /// <summary>

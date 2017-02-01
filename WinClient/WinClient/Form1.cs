@@ -28,7 +28,15 @@ namespace WinClient
         private void button1_Click(object sender, EventArgs e)
         {
             var url = string.Format("{0}/SendData", this.ServerPath.Text);
-            this.textBox1.Text = HttpConnectLib.Get(url);
+            List<ResultData> results = HttpConnectLib.Get<List<ResultData>>(url);
+
+            var sb = new StringBuilder();
+            foreach(ResultData result in results)
+            {
+                sb.AppendLine(string.Format("name={0} {1}", result.name, result.age));
+            }
+
+            this.textBox1.Text = sb.ToString();
         }
 
         /// <summary>
