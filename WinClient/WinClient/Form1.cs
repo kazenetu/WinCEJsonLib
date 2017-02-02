@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using WinClient.connectLib;
@@ -9,14 +11,35 @@ namespace WinClient
 {
     public partial class Form1 : Form
     {
-        private string baseAddress = "http://localhost:8080/jerseyServer/app/Service1";
+        private string webApiBaseAddress = "";
 
         private DataTable results = null;
 
         public Form1()
         {
             InitializeComponent();
-            this.ServerPath.Text = baseAddress;
+
+            webApiBaseAddress = getWebApiBaseAddress()+ "jerseyServer/app/Service1";
+        }
+
+        private string getWebApiBaseAddress()
+        {
+            var hostIP = string.Empty;
+
+            var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().Name);
+            var fullPath = Path.Combine(appDir, "localhostIP.txt");
+
+            using(var reader=new StreamReader(fullPath))
+            {
+                hostIP = reader.ReadLine();
+            }
+
+            if (string.IsNullOrEmpty(hostIP))
+            {
+                hostIP = "localhost";
+            }
+
+            return string.Format("http://{0}:8080/", hostIP.Trim());
         }
 
         /// <summary>
@@ -26,7 +49,7 @@ namespace WinClient
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            var url = string.Format("{0}/SendData", this.ServerPath.Text);
+            var url = string.Format("{0}/SendData", webApiBaseAddress);
             results = HttpConnectLib.Get<DataTable>(url);
 
             var sb = new StringBuilder();
@@ -51,7 +74,7 @@ namespace WinClient
                 return;
             }
 
-            var url = string.Format("{0}/GetDataCount", this.ServerPath.Text);
+            var url = string.Format("{0}/GetDataCount", webApiBaseAddress);
             var result = HttpConnectLib.Post<Hashtable>(url, results);
 
             this.label1.Text = "";
