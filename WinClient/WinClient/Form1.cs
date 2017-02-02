@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,7 +13,9 @@ namespace WinClient
 {
     public partial class Form1 : Form
     {
-        private string baseAddress = "http://localhost:51127/Service1.svc";
+        private string baseAddress = "http://localhost:8080/jerseyServer/app/Service1";
+
+        private List<ResultData> results = null;
 
         public Form1()
         {
@@ -28,7 +31,7 @@ namespace WinClient
         private void button1_Click(object sender, EventArgs e)
         {
             var url = string.Format("{0}/SendData", this.ServerPath.Text);
-            List<ResultData> results = HttpConnectLib.Get<List<ResultData>>(url);
+            results = HttpConnectLib.Get<List<ResultData>>(url);
 
             var sb = new StringBuilder();
             foreach(ResultData result in results)
@@ -46,8 +49,20 @@ namespace WinClient
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
+            if(this.textBox1.Text == string.Empty)
+            {
+                MessageBox.Show("1.serverから受信 を実行してください");
+                return;
+            }
+
             var url = string.Format("{0}/GetDataCount", this.ServerPath.Text);
-            this.label1.Text = HttpConnectLib.Post(url, this.textBox1.Text);
+            var result = HttpConnectLib.Post<Hashtable>(url, results);
+
+            this.label1.Text = "";
+            if (result.Contains("count"))
+            {
+                this.label1.Text = result["count"].ToString();
+            }
         }
     }
 }

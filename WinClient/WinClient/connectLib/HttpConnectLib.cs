@@ -43,9 +43,9 @@ namespace WinClient.connectLib
         /// POSTメソッド
         /// </summary>
         /// <param name="url">URL</param>
-        /// <param name="jsonParam">JSONパラメータ</param>
+        /// <param name="param">パラメータ</param>
         /// <returns>レスポンス</returns>
-        public static string Post(string url, string jsonParam)
+        public static T Post<T>(string url, object param)
         {
             string result = string.Empty;
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -58,19 +58,13 @@ namespace WinClient.connectLib
             {
                 req.Method = "POST";
                 req.ContentType = "application/json";
+                req.AllowWriteStreamBuffering = true;
 
-                var data = Encoding.ASCII.GetBytes(jsonParam);
+                var data = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(param));
                 paramStream = req.GetRequestStream();
                 paramStream.Write(data, 0, data.Length);
                 paramStream.Close();
                 paramStream = null;
-
-                /*
-                paramStream = req.GetRequestStream();
-                paramWriter = new StreamWriter(paramStream, Encoding.UTF8);
-
-                paramWriter.WriteLine(jsonParam);
-                */
 
                 // レスポンスの取得と読み込み
                 res = req.GetResponse();
@@ -85,7 +79,7 @@ namespace WinClient.connectLib
                 if (resStream != null) resStream.Close();
             }
 
-            return result;
+            return JsonConvert.DeserializeObject<T>(result);
         }
 
     }
