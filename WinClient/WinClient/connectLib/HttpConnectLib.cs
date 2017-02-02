@@ -15,7 +15,7 @@ namespace WinClient.connectLib
         /// </summary>
         /// <param name="url">クエリ付きURL</param>
         /// <returns>レスポンス</returns>
-        public static T Get<T>(string url)
+        public static T Get<T> (string url) where T : new()
         {
             string result = string.Empty;
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -31,9 +31,13 @@ namespace WinClient.connectLib
                 sr = new StreamReader(resStream, Encoding.UTF8);
                 result = sr.ReadToEnd();
             }
+            catch
+            {
+                return new T();
+            }
             finally {
-                sr.Close();
-                resStream.Close();
+                if(sr != null) sr.Close();
+                if (resStream != null) resStream.Close();
             }
 
             return JsonConvert.DeserializeObject<T>(result);
@@ -45,7 +49,7 @@ namespace WinClient.connectLib
         /// <param name="url">URL</param>
         /// <param name="param">パラメータ</param>
         /// <returns>レスポンス</returns>
-        public static T Post<T>(string url, object param)
+        public static T Post<T>(string url, object param) where T : new()
         {
             string result = string.Empty;
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -71,6 +75,10 @@ namespace WinClient.connectLib
                 resStream = res.GetResponseStream();
                 sr = new StreamReader(resStream, Encoding.UTF8);
                 result = sr.ReadToEnd();
+            }
+            catch
+            {
+                return new T();
             }
             finally
             {
