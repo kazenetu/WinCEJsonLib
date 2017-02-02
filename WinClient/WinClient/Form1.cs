@@ -15,7 +15,7 @@ namespace WinClient
     {
         private string baseAddress = "http://localhost:8080/jerseyServer/app/Service1";
 
-        private List<ResultData> results = null;
+        private DataTable results = null;
 
         public Form1()
         {
@@ -31,12 +31,12 @@ namespace WinClient
         private void button1_Click(object sender, EventArgs e)
         {
             var url = string.Format("{0}/SendData", this.ServerPath.Text);
-            results = HttpConnectLib.Get<List<ResultData>>(url);
+            results = HttpConnectLib.Get<DataTable>(url);
 
             var sb = new StringBuilder();
-            foreach(ResultData result in results)
+            foreach(DataRow result in results.Rows)
             {
-                sb.AppendLine(string.Format("name={0} {1}", result.name, result.age));
+                sb.AppendLine(string.Format("name={0} {1}", result["name"], result["age"]));
             }
 
             this.textBox1.Text = sb.ToString();
