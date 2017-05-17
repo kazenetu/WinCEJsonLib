@@ -61,7 +61,7 @@ namespace WinClient.connectLib
                 req.ContentType = "application/json";
                 req.AllowWriteStreamBuffering = true;
 
-                var data = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(param));
+                var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(param));
                 paramStream = req.GetRequestStream();
                 paramStream.Write(data, 0, data.Length);
                 paramStream.Close();
