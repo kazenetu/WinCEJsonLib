@@ -52,13 +52,7 @@ namespace WinClient
             var url = string.Format("{0}/SendData", webApiBaseAddress);
             results = HttpConnectLib.Get<DataTable>(url);
 
-            var sb = new StringBuilder();
-            foreach(DataRow result in results.Rows)
-            {
-                sb.AppendLine(string.Format("name={0} {1}", result["name"], result["age"]));
-            }
-
-            this.textBox1.Text = sb.ToString();
+            dataGridView1.DataSource = results;
         }
 
         /// <summary>
@@ -68,7 +62,7 @@ namespace WinClient
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            if(this.textBox1.Text == string.Empty)
+            if(results == null)
             {
                 MessageBox.Show("1.serverから受信 を実行してください");
                 return;
